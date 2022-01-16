@@ -112,7 +112,7 @@ In this code you can see a few different things. One you can see that you can ch
 In the code above we can make a small change and drastically change the look. For the first rectangle we could do it this way (shown in the **left** image below):
 
 ```swift
-						Rectangle()
+Rectangle()
                 .foregroundColor(.red)
                 .padding()
                 .border(.purple, width: 10)
@@ -121,7 +121,7 @@ In the code above we can make a small change and drastically change the look. Fo
 Or this way (shown in the **right** image below):
 
 ```
-						Rectangle()
+Rectangle()
                 .foregroundColor(.red)
                 .border(.purple, width: 10)
                 .padding()
