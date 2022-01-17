@@ -29,9 +29,9 @@ struct ContentView_Previews: PreviewProvider {
 }
 ```
 
-The first struct `ContentView` is where all of your UI design will happen. By default, everything in SwiftUI starts out **centered**. All of the declarative structures in SwiftUI are **capitalized**. So you can see that the 
+The first struct `ContentView` is where all of your UI design will happen. By default, everything in SwiftUI starts out **centered**. All of the declarative structures in SwiftUI are **capitalized**. 
 
-SwiftUI code is parsed into a tree structure, so there is a lot of **[method chaining](https://en.wikipedia.org/wiki/Method_chaining)** ([another link](https://blog.avenuecode.com/how-well-do-you-know-swiftui)) for modifying views. The structure of a user interface is based on various ContentViews that are placed on the screen and filled with different types of content. If you look at the view debugging of the basic app, you'll see this structure.
+SwiftUI code is parsed into a tree structure, so there is a lot of **[method chaining](https://en.wikipedia.org/wiki/Method_chaining)** ([another link](https://blog.avenuecode.com/how-well-do-you-know-swiftui)) for modifying views. The structure of a user interface is based on various ContentViews that are placed on the screen and filled with different types of content. These are **not objects, but rather are values,** which has a lot of implications for how we should think about SwiftUI projects. If you look at the view debugging of the basic app, you'll see this structure.
 
 ![Screen Shot 2022-01-16 at 2.12.28 PM](images/ViewDebug.png)
 
@@ -120,7 +120,7 @@ Rectangle()
 
 Or this way (shown in the **right** image below):
 
-```
+```swift
 Rectangle()
 	.foregroundColor(.red)
 	.border(.purple, width: 10)
@@ -130,3 +130,144 @@ Rectangle()
 Here are the two different results:
 
 ![MethodChainingOrder](images/MethodChainingOrder.png)
+
+## @State Variables
+
+The way the view structure of SwiftUI works, the view is only updated when it knows that state changes. This is profoundly useful in that it leaves a lot of the work that used to be done by programmers to SwiftUI. When we need to create a variable that might affect the view, we declare it using the keyword `@State` before `var`. This tells SwiftUI to watch this variable for changes. When a change is detected, the tree structure of the view is re-evaluated to account for the change.
+
+The neat thing about @State variables is that SwiftUI knows which children within the view structure actually utilize this variable and it *only* updates those. This has performance benefits.
+
+## SwiftUI Reference
+
+`Color()`
+
+`Text()`
+
+`Image()`
+
+`.resizable()`
+
+`.scaledToFit()`
+
+`VStack {}`
+
+`HStack {}`
+
+`ZStack {}` - Overlapping views. One view on top of another.
+
+`Spacer()`
+
+`.padding()`
+
+`.offset()`
+
+`NavigationView {}`
+
+`List {}`
+
+`.navigationTitle`
+
+`.navigationBarTitleDisplayMode()`
+
+`NavigationLink()`
+
+[Resource](https://sarunw.com/posts/navigation-in-swiftui/)
+
+`UIViewRepresentable`
+
+[Resource](https://stackoverflow.com/questions/58388490/need-help-whenintegrating-complex-uiview-with-swiftui-failed)
+
+`ForEach()`
+
+```swift
+import SwiftUI
+
+struct ContentView: View {
+    var body: some View {
+        HStack {
+            ForEach(1...20, id: \.self) { x in
+                Rectangle()
+                    .foregroundColor(Color(hue: Double.random(in: 0...1.0), saturation: 0.5, brightness: 1.0))
+            }
+        }
+    }
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}
+
+```
+
+![image-20220116185948475](images/ForEach.png)
+
+`if`/`else`
+
+`switch`
+
+## Linking SwiftUI and UIKit Views
+
+Because my focus is bridging SwiftUI and UIKit views (being one of the developers of SwiftProcessing) this is a use case that's very helpful. It may also help people who are trying to build portfolios of smaller projects that use UIKit or who are using libraries/frameworks that still rely upon UIKit.
+
+In all of the resources I've read, I've learned that SwiftUI is not meant to take the place of UIKit. Rather, the framework is actually built on top of UIKit and is meant to solve a family of bugs that are related to state management. Because SwiftUI keeps such good track of what children in its view tree need updating, it's a very efficient way to update a UI. It makes it so that developers don't have to do as much management as they had to in the past. That said, it is built on top of UIKit, so, if you need to, you should be able to interface the two.
+
+My use case is simple: I need a portfolio app that shows things I'm working on.
+
+For this we'll use a `List` in a `NavigationView`, as well as some `NavigationLink`s to get us where we want to go.
+
+Since SwiftProcessing is built as a subclass of UIView, we'll use a protocol for SwiftUI called `UIViewRepresentable` to work with it in SwiftUI. Here is my `ContentView.swift` file:
+
+```swift
+import SwiftUI
+
+struct ContentView: View {
+    var body: some View {
+        NavigationView {
+            List {
+                NavigationLink("Hue", destination: HueView())
+                NavigationLink("Gradient", destination: GradientView())
+
+                    .navigationTitle("SwiftProcessing Examples")
+                    .navigationBarTitleDisplayMode(.inline)
+            }
+        }
+        
+    }
+}
+
+struct HueView: UIViewRepresentable {
+    func makeUIView(context: Context) -> Hue {
+        Hue()
+    }
+    
+    func updateUIView(_ view: Hue, context: Context) {
+        view.setNeedsDisplay()
+    }
+}
+
+struct GradientView: UIViewRepresentable {
+    func makeUIView(context: Context) -> Gradient {
+        Gradient()
+    }
+    
+    func updateUIView(_ view: Gradient, context: Context) {
+        view.setNeedsDisplay()
+    }
+}
+
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}
+
+```
+
+Here I am linking to two SwiftProcessing projects. In order to display them, I need to create destinations that conform to the `UIViewRepresntable` protocol. This protocol is a wrapper around a UIView that enables it to work with SwiftUI.
+
+![PortfolioExample](images/PortfolioExample.png)
+
+The `Hue()` and `Gradient()` classes are just normal SwiftProcessing projects with the classes renamed to be unique. No other modification was done to those files, so this presents an awesome opportunity for organizing projects.
