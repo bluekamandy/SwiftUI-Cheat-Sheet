@@ -113,18 +113,18 @@ In the code above we can make a small change and drastically change the look. Fo
 
 ```swift
 Rectangle()
-	.foregroundColor(.red)
-	.padding()
-	.border(.purple, width: 10)
+  .foregroundColor(.red)
+  .padding()
+  .border(.purple, width: 10)
 ```
 
 Or this way (shown in the **right** image below):
 
 ```swift
 Rectangle()
-	.foregroundColor(.red)
-	.border(.purple, width: 10)
-	.padding()
+  .foregroundColor(.red)
+  .border(.purple, width: 10)
+  .padding()
 ```
 
 Here are the two different results:
