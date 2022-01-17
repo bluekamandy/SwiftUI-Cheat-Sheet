@@ -217,7 +217,7 @@ My use case is simple: I need a portfolio app that shows things I'm working on.
 
 For this we'll use a `List` in a `NavigationView`, as well as some `NavigationLink`s to get us where we want to go.
 
-Since SwiftProcessing is built as a subclass of UIView, we'll use a protocol for SwiftUI called `UIViewRepresentable` to work with it in SwiftUI. Here is my `ContentView.swift` file:
+Since SwiftProcessing is built as a subclass of `UIView`, we'll use a protocol for SwiftUI called `UIViewRepresentable` to work with it in SwiftUI. Here is my `ContentView.swift` file:
 
 ```swift
 import SwiftUI
@@ -266,7 +266,7 @@ struct ContentView_Previews: PreviewProvider {
 
 ```
 
-Here I am linking to two SwiftProcessing projects. In order to display them, I need to create destinations that conform to the `UIViewRepresntable` protocol. This protocol is a wrapper around a UIView that enables it to work with SwiftUI.
+Here I am linking to two SwiftProcessing projects. In order to display them, I need to create destinations that conform to the `UIViewRepresntable` protocol. This protocol is a wrapper around a `UIView` that enables it to work with SwiftUI.
 
 ![PortfolioExample](images/PortfolioExample.png)
 
